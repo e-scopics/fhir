@@ -32,7 +32,7 @@ def antlr4_cc_lexer(name, src, namespaces = None, imports = None, deps = None, l
         name = "antlr_tool",
         jvm_flags = ["-Xmx256m"],
         main_class = "org.antlr.v4.Tool",
-        runtime_deps = ["@maven//:org_antlr_antlr4_4_7_1"],
+        runtime_deps = ["@maven//:org_antlr_antlr4_4_13_2"],
     )
 
     command = ";\n".join([
@@ -53,7 +53,7 @@ def antlr4_cc_lexer(name, src, namespaces = None, imports = None, deps = None, l
         name = name,
         srcs = [f for f in out_files if f.endswith(".cpp")],
         hdrs = [f for f in out_files if f.endswith(".h")],
-        deps = ["@antlr_cc_runtime//:antlr4_runtime"] + deps,
+        deps = ["@antlr_cc_runtime//:antlr4-cpp-runtime"] + deps,
         copts = [
             "-fexceptions",
         ],
@@ -136,7 +136,7 @@ def antlr4_cc_parser(
         name = name,
         srcs = [f for f in out_files if f.endswith(".cpp")],
         hdrs = [f for f in out_files if f.endswith(".h")],
-        deps = ["@antlr_cc_runtime//:antlr4_runtime"] + deps,
+        deps = ["@antlr_cc_runtime//:antlr4-cpp-runtime"] + deps,
         copts = [
             "-fexceptions",
             # FIXME: antlr generates broken C++ code that attempts to construct

@@ -55,14 +55,14 @@ filegroup(
 filegroup(
     name = "profilegenerator",
     srcs = glob([
-        "profilegenerator/*",
+            "profilegenerator/*",
     ]),
 )
 
 filegroup(
     name = "footprint",
     srcs = glob([
-        "footprint/*",
+            "footprint/*",
     ]),
 )
 

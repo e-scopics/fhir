@@ -19,7 +19,8 @@
 #include <string>
 #include <vector>
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
+#include "absl/log/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"

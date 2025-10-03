@@ -1,0 +1,70 @@
+"""Bazel module for the FHIR project"""
+
+module(
+    name = "com_google_fhir",
+    version = "0.1.0",
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "abseil-cpp", version = "20250512.1", repo_name = "com_google_absl")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "gazelle", version = "0.35.0")
+bazel_dep(name = "googletest", version = "1.16.0", repo_name = "com_google_googletest")
+bazel_dep(name = "protobuf", version = "31.1", repo_name = "com_google_protobuf")
+bazel_dep(name = "re2", version = "2025-08-12", repo_name = "com_googlesource_code_re2")
+bazel_dep(name = "rules_cc", version = "0.2.1")
+bazel_dep(name = "rules_go", version = "0.57.0", repo_name = "io_bazel_rules_go")
+bazel_dep(name = "rules_java", version = "8.15.2")
+bazel_dep(name = "rules_jvm_external", version = "6.0")
+bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "zlib", version = "1.3.1.bcr.7")
+bazel_dep(name = "libarchive", version = "3.8.1")
+bazel_dep(name = "icu", version = "76.1.bcr.3", repo_name = "icu")
+bazel_dep(name = "nlohmann_json", version = "3.12.0")
+bazel_dep(name = "antlr4-cpp-runtime", version = "4.13.2", repo_name = "antlr_cc_runtime")
+
+go_deps = use_extension("@io_bazel_rules_go//go:extensions.bzl", "go_deps")
+go_deps.from_file(go_mod = "//go:go.mod")
+use_repo(go_deps, "com_github_golang_protobuf", "com_github_google_go_cmp", "org_golang_google_protobuf")
+
+fhir_http_files = use_extension("//bazel:extensions.bzl", "fhir_http_files")
+use_repo(fhir_http_files, "hl7.fhir.r4.core_4.0.1", "hl7.fhir.r5.core_5.0.0")
+
+gazelle = use_extension("@gazelle//:extensions.bzl", "gazelle")
+gazelle.go_repositories(
+    go_mod = "//go:go.mod",
+)
+
+maven = use_extension(
+    "@rules_jvm_external//:extensions.bzl",
+    "maven",
+)
+maven.install(
+    artifacts = [
+        "com.beust:jcommander:1.72",
+        "com.fasterxml.jackson.core:jackson-annotations:2.9.5",
+        "com.fasterxml.jackson.core:jackson-core:2.9.5",
+        "com.fasterxml.jackson.core:jackson-databind:2.9.5",
+        "com.google.cloud:google-cloud-bigquery:1.38.0",
+        "com.google.code.gson:gson:2.8.9",
+        "com.google.errorprone:error_prone_annotations:2.5.1",
+        "com.google.guava:guava-testlib:32.0.1-jre",
+        "com.google.guava:guava:32.0.1-jre",
+        "com.google.http-client:google-http-client-gson:1.43.0",
+        "com.google.testparameterinjector:test-parameter-injector:1.15",
+        "com.google.truth:truth:0.42",
+        "com.google.truth.extensions:truth-proto-extension:1.1",
+        "junit:junit:4.13-rc-1",
+        "org.antlr:antlr4:4.13.2@jar",
+        "org.apache.beam:beam-runners-direct-java:2.9.0",
+        "org.apache.beam:beam-runners-google-cloud-dataflow-java:2.9.0",
+        "org.apache.beam:beam-sdks-java-core:2.9.0",
+        "org.apache.commons:commons-compress:1.21",
+        "org.slf4j:slf4j-simple:1.7.25",
+    ],
+    repositories = [
+        "https://maven.google.com",
+        "https://repo1.maven.org/maven2",
+    ],
+)
+use_repo(maven, "maven")

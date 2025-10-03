@@ -47,7 +47,7 @@ filegroup(
 filegroup(
     name = "footprint",
     srcs = glob([
-        "footprint/*",
+            "footprint/*",
     ]),
 )
 

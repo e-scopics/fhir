@@ -38,12 +38,12 @@ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
   explicit StringErrorCollector(std::string* error_text)
       : error_text_(error_text) {}
 
-  void AddError(int line, int column, const std::string& message) override {
+  void RecordError(int line, google::protobuf::io::ColumnNumber column, absl::string_view message) override {
     absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
                               message);
   }
 
-  void AddWarning(int line, int column, const std::string& message) override {
+  void RecordWarning(int line, google::protobuf::io::ColumnNumber column, absl::string_view message) override {
     absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
                               message);
   }

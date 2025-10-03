@@ -521,7 +521,7 @@ typedef uint64_t uintmax_t;
 #define HAVE_ERRNO_H 1
 
 /* Define to 1 if you have the <expat.h> header file. */
-#define HAVE_EXPAT_H 1
+/* #define HAVE_EXPAT_H 1 */
 
 /* Define to 1 if you have the <ext2fs/ext2_fs.h> header file. */
 /* #undef HAVE_EXT2FS_EXT2_FS_H */
@@ -706,7 +706,7 @@ typedef uint64_t uintmax_t;
 /* #undef HAVE_LIBCRYPTO */
 
 /* Define to 1 if you have the `expat' library (-lexpat). */
-#define HAVE_LIBEXPAT 1
+/* #define HAVE_LIBEXPAT 1 */
 
 /* Define to 1 if you have the `gcc' library (-lgcc). */
 /* #undef HAVE_LIBGCC */

@@ -36,7 +36,7 @@ bool IsChoiceType(const google::protobuf::FieldDescriptor* field) {
 }  // namespace
 
 const ScopedErrorReporter ScopedErrorReporter::WithScope(
-    absl::string_view scope, std::optional<uint> index) const {
+    absl::string_view scope, std::optional<unsigned int> index) const {
   return ScopedErrorReporter(&handler_, scope, index, this);
 }
 
@@ -79,7 +79,7 @@ absl::Status ScopedErrorReporter::ReportFhirFatal(
 }
 absl::Status ScopedErrorReporter::ReportFhirFatal(
     const absl::Status& status, absl::string_view field_name,
-    std::optional<uint> index) const {
+    std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirFatal(status);
 }
 
@@ -89,7 +89,7 @@ absl::Status ScopedErrorReporter::ReportFhirError(absl::string_view msg) const {
 }
 absl::Status ScopedErrorReporter::ReportFhirError(
     absl::string_view msg, absl::string_view field_name,
-    std::optional<uint> index) const {
+    std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirError(msg);
 }
 
@@ -100,7 +100,7 @@ absl::Status ScopedErrorReporter::ReportFhirWarning(
 }
 absl::Status ScopedErrorReporter::ReportFhirWarning(
     absl::string_view msg, absl::string_view field_name,
-    std::optional<uint> index) const {
+    std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirWarning(msg);
 }
 
@@ -111,7 +111,7 @@ absl::Status ScopedErrorReporter::ReportFhirPathFatal(
 }
 absl::Status ScopedErrorReporter::ReportFhirPathFatal(
     const absl::Status& status, absl::string_view expression,
-    absl::string_view field_name, std::optional<uint> index) const {
+    absl::string_view field_name, std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirPathFatal(status, expression);
 }
 
@@ -122,7 +122,7 @@ absl::Status ScopedErrorReporter::ReportFhirPathError(
 }
 absl::Status ScopedErrorReporter::ReportFhirPathError(
     absl::string_view expression, absl::string_view field_name,
-    std::optional<uint> index) const {
+    std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirPathError(expression);
 }
 
@@ -133,7 +133,7 @@ absl::Status ScopedErrorReporter::ReportFhirPathWarning(
 }
 absl::Status ScopedErrorReporter::ReportFhirPathWarning(
     absl::string_view expression, absl::string_view field_name,
-    std::optional<uint> index) const {
+    std::optional<unsigned int> index) const {
   return WithScope(field_name, index).ReportFhirPathWarning(expression);
 }
 
@@ -149,8 +149,8 @@ FailFastErrorHandler& FailFastErrorHandler::FailOnFatalOnly() {
   return *kInstance;
 }
 
-std::optional<uint> IndexOrNullopt(const google::protobuf::FieldDescriptor* field,
-                                   uint index) {
+std::optional<unsigned int> IndexOrNullopt(const google::protobuf::FieldDescriptor* field,
+                                   unsigned int index) {
   return field->is_repeated() ? std::optional(index) : std::nullopt;
 }
 

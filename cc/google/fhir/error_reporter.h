@@ -65,7 +65,7 @@ namespace google::fhir {
 //   fatal issue could result in data loss.
 
 class ErrorHandler {
- public:
+public:
   virtual ~ErrorHandler() {}
 
   // Handler functions to be implemented by concrete classes.
@@ -86,7 +86,7 @@ class ErrorHandler {
   //                 (including index into repeated fields).
   // * field_path: Path to the field where the error occurred.  This will be
   //               identical to `element_path`, but without the field index.
-  virtual absl::Status HandleFhirFatal(const absl::Status& status,
+  virtual absl::Status HandleFhirFatal(const absl::Status &status,
                                        absl::string_view element_path,
                                        absl::string_view field_path) = 0;
 
@@ -141,7 +141,7 @@ class ErrorHandler {
   //                 (including index into repeated fields).
   // * field_path: Path to the field where the error occurred.  This will be
   //               identical to `element_path`, but without the field index.
-  virtual absl::Status HandleFhirPathFatal(const absl::Status& status,
+  virtual absl::Status HandleFhirPathFatal(const absl::Status &status,
                                            absl::string_view expression,
                                            absl::string_view element_path,
                                            absl::string_view field_path) = 0;
@@ -219,14 +219,12 @@ class ErrorHandler {
 //     // field_path -> ResourceName.fieldName
 //   }
 class ScopedErrorReporter final {
- public:
-  ScopedErrorReporter(ErrorHandler* handler, absl::string_view field_name)
+public:
+  ScopedErrorReporter(ErrorHandler *handler, absl::string_view field_name)
       : handler_(*handler), field_name_(field_name), prev_scope_(nullptr) {}
-  ScopedErrorReporter(ErrorHandler* handler, absl::string_view field_name,
-                      uint index)
-      : handler_(*handler),
-        field_name_(field_name),
-        index_(index),
+  ScopedErrorReporter(ErrorHandler *handler, absl::string_view field_name,
+                      unsigned int index)
+      : handler_(*handler), field_name_(field_name), index_(index),
         prev_scope_(nullptr) {}
 
   // Create a new ScopedErrorReporter which represents nesting the given scope
@@ -234,17 +232,18 @@ class ScopedErrorReporter final {
   // NOTE: If a field descriptor is available, users should use the version of
   // this function that takes a FieldDescriptor. Because this version of
   // WithScope does not produce correct FHIR path when given a Choice type.
-  const ScopedErrorReporter WithScope(
-      absl::string_view scope, std::optional<uint> index = std::nullopt) const;
+  const ScopedErrorReporter
+  WithScope(absl::string_view scope,
+            std::optional<unsigned int> index = std::nullopt) const;
 
   // Enters a scope based on a proto field.  This forwards to the above
   // constructor using the JSON field name (to match the FHIR field), and drops
   // any index param if the field is not repeated.
   // TODO(b/238909399): catch if a non-zero index is sent with a singular field,
   // or a repeated field is missing an index.
-  const ScopedErrorReporter WithScope(
-      const google::protobuf::FieldDescriptor* field,
-      std::optional<std::uint8_t> index = std::nullopt) const;
+  const ScopedErrorReporter
+  WithScope(const google::protobuf::FieldDescriptor *field,
+            std::optional<std::uint8_t> index = std::nullopt) const;
 
   // Report functions that forward to Handle functions of the same name on
   // the ErrorHandler implementation wrapped by this object.
@@ -257,50 +256,50 @@ class ScopedErrorReporter final {
   // is equivalent to
   //
   // reporter->WithScope(field_name, index).ReportFhirError("err-msg");
-  absl::Status ReportFhirFatal(const absl::Status& status) const;
-  absl::Status ReportFhirFatal(const absl::Status& status,
+  absl::Status ReportFhirFatal(const absl::Status &status) const;
+  absl::Status ReportFhirFatal(const absl::Status &status,
                                absl::string_view field_name,
-                               std::optional<uint> index = std::nullopt) const;
+                               std::optional<unsigned int> index = std::nullopt) const;
 
   absl::Status ReportFhirError(absl::string_view msg) const;
   absl::Status ReportFhirError(absl::string_view msg,
                                absl::string_view field_name,
-                               std::optional<uint> index = std::nullopt) const;
+                               std::optional<unsigned int> index = std::nullopt) const;
 
   absl::Status ReportFhirWarning(absl::string_view msg) const;
-  absl::Status ReportFhirWarning(
-      absl::string_view msg, absl::string_view field_name,
-      std::optional<uint> index = std::nullopt) const;
+  absl::Status
+  ReportFhirWarning(absl::string_view msg, absl::string_view field_name,
+                    std::optional<unsigned int> index = std::nullopt) const;
 
-  absl::Status ReportFhirPathFatal(const absl::Status& status,
+  absl::Status ReportFhirPathFatal(const absl::Status &status,
                                    absl::string_view expression) const;
-  absl::Status ReportFhirPathFatal(
-      const absl::Status& status, absl::string_view expression,
-      absl::string_view field_name,
-      std::optional<uint> index = std::nullopt) const;
+  absl::Status
+  ReportFhirPathFatal(const absl::Status &status, absl::string_view expression,
+                      absl::string_view field_name,
+                      std::optional<unsigned int> index = std::nullopt) const;
 
   absl::Status ReportFhirPathError(absl::string_view expression) const;
-  absl::Status ReportFhirPathError(
-      absl::string_view expression, absl::string_view field_name,
-      std::optional<uint> index = std::nullopt) const;
+  absl::Status
+  ReportFhirPathError(absl::string_view expression,
+                      absl::string_view field_name,
+                      std::optional<unsigned int> index = std::nullopt) const;
 
   absl::Status ReportFhirPathWarning(absl::string_view expression) const;
-  absl::Status ReportFhirPathWarning(
-      absl::string_view expression, absl::string_view field_name,
-      std::optional<uint> index = std::nullopt) const;
+  absl::Status
+  ReportFhirPathWarning(absl::string_view expression,
+                        absl::string_view field_name,
+                        std::optional<unsigned int> index = std::nullopt) const;
 
- private:
-  ErrorHandler& handler_;
+private:
+  ErrorHandler &handler_;
   const std::string field_name_;
-  const std::optional<uint> index_;
-  const ScopedErrorReporter* prev_scope_;
+  const std::optional<unsigned int> index_;
+  const ScopedErrorReporter *prev_scope_;
 
-  ScopedErrorReporter(ErrorHandler* handler, absl::string_view field_name,
-                      std::optional<uint> index,
-                      const ScopedErrorReporter* prev_scope)
-      : handler_(*handler),
-        field_name_(field_name),
-        index_(index),
+  ScopedErrorReporter(ErrorHandler *handler, absl::string_view field_name,
+                      std::optional<unsigned int> index,
+                      const ScopedErrorReporter *prev_scope)
+      : handler_(*handler), field_name_(field_name), index_(index),
         prev_scope_(prev_scope) {}
 
   // Returns the field path to the current scope, not including any indexes
@@ -328,13 +327,13 @@ class ScopedErrorReporter final {
 //   This is useful for a "best-effort" that should finish even if it encounters
 //   invalid data.
 class FailFastErrorHandler : public ErrorHandler {
- public:
+public:
   // Returns a singleton instance of a fast-fail
-  static FailFastErrorHandler& FailOnErrorOrFatal();
+  static FailFastErrorHandler &FailOnErrorOrFatal();
 
   // Returns a singleton instance of a "fast-fail on error only" reporter for
   // convenience.
-  static FailFastErrorHandler& FailOnFatalOnly();
+  static FailFastErrorHandler &FailOnFatalOnly();
 
   // FailFastErrorHandlers handle errors via return status rather than
   // aggregating.
@@ -342,7 +341,7 @@ class FailFastErrorHandler : public ErrorHandler {
   bool HasErrors() const override { return false; }
   bool HasFatals() const override { return false; }
 
-  absl::Status HandleFhirFatal(const absl::Status& status,
+  absl::Status HandleFhirFatal(const absl::Status &status,
                                absl::string_view element_path,
                                absl::string_view field_path) override {
     return element_path.empty()
@@ -369,7 +368,7 @@ class FailFastErrorHandler : public ErrorHandler {
     return absl::OkStatus();
   }
 
-  absl::Status HandleFhirPathFatal(const absl::Status& status,
+  absl::Status HandleFhirPathFatal(const absl::Status &status,
                                    absl::string_view expression,
                                    absl::string_view element_path,
                                    absl::string_view field_path) override {
@@ -394,7 +393,7 @@ class FailFastErrorHandler : public ErrorHandler {
     return absl::OkStatus();
   }
 
- private:
+private:
   enum Behavior { FAIL_ON_ERROR_OR_FATAL, FAIL_ON_FATAL_ONLY };
 
   explicit FailFastErrorHandler(Behavior behavior) : behavior_(behavior) {}
@@ -402,6 +401,6 @@ class FailFastErrorHandler : public ErrorHandler {
   const Behavior behavior_;
 };
 
-}  // namespace google::fhir
+} // namespace google::fhir
 
-#endif  // GOOGLE_FHIR_ERROR_REPORTER_H_
+#endif // GOOGLE_FHIR_ERROR_REPORTER_H_

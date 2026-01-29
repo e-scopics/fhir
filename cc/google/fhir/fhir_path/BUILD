@@ -38,6 +38,7 @@ cc_library(
     copts = [
         "-fexceptions",
     ],
+    local_defines = ["U_STATIC_IMPLEMENTATION"],
     features = ["-use_header_modules"],  # Incompatible with -fexception
     strip_include_prefix = "//cc/",
     deps = [

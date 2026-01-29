@@ -3,63 +3,6 @@
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_java//java:defs.bzl", "java_binary")
 
-def antlr4_cc_lexer(name, src, namespaces = None, imports = None, deps = None, lib_import = None):
-    """Generates the C++ source corresponding to an antlr4 lexer definition.
-
-    Args:
-      name: The name of the package to use for the cc_library.
-      src: The antlr4 g4 file containing the lexer rules.
-      namespaces: The namespace used by the generated files. Uses an array to
-        support nested namespaces. Defaults to [name].
-      imports: A list of antlr4 source imports to use when building the lexer.
-      deps: Dependencies for the generated code.
-      lib_import: Optional target for importing grammar and token files.
-    """
-    namespaces = namespaces or [name]
-    imports = imports or []
-    deps = deps or []
-    if not src.endswith(".g4"):
-        fail("Grammar must end with .g4", "src")
-    if (any([not imp.endswith(".g4") for imp in imports])):
-        fail("Imported files must be Antlr4 grammar ending with .g4", "imports")
-    file_prefix = src[:-3]
-    base_file_prefix = _strip_end(file_prefix, "Lexer")
-    out_files = [
-        "%sLexer.h" % base_file_prefix,
-        "%sLexer.cpp" % base_file_prefix,
-    ]
-    java_binary(
-        name = "antlr_tool",
-        jvm_flags = ["-Xmx256m"],
-        main_class = "org.antlr.v4.Tool",
-        runtime_deps = ["@maven//:org_antlr_antlr4_4_13_2"],
-    )
-
-    command = ";\n".join([
-        # Use the first namespace, we'll add the others afterwards.
-        _make_tool_invocation_command(namespaces[0], lib_import),
-        _make_namespace_adjustment_command(namespaces, out_files),
-    ])
-
-    native.genrule(
-        name = name + "_source",
-        srcs = [src] + imports,
-        outs = out_files,
-        cmd = command,
-        heuristic_label_expansion = 0,
-        tools = ["antlr_tool"],
-    )
-    cc_library(
-        name = name,
-        srcs = [f for f in out_files if f.endswith(".cpp")],
-        hdrs = [f for f in out_files if f.endswith(".h")],
-        deps = ["@antlr_cc_runtime//:antlr4-cpp-runtime"] + deps,
-        copts = [
-            "-fexceptions",
-        ],
-        features = ["-use_header_modules"],  # Incompatible with -fexceptions.
-    )
-
 def antlr4_cc_parser(
         name,
         src,
@@ -84,6 +27,14 @@ def antlr4_cc_parser(
       deps: Dependencies for the generated code.
       lib_import: Optional target for importing grammar and token files.
     """
+
+    java_binary(
+        name = "antlr_tool",
+        jvm_flags = ["-Xmx256m"],
+        main_class = "org.antlr.v4.Tool",
+        runtime_deps = ["@maven//:org_antlr_antlr4_4_13_2"],
+    )
+
     suffixes = ()
     if listener:
         suffixes += (
@@ -113,6 +64,8 @@ def antlr4_cc_parser(
     out_files = [
         "%sParser.h" % base_file_prefix,
         "%sParser.cpp" % base_file_prefix,
+        "%sLexer.h" % base_file_prefix,
+        "%sLexer.cpp" % base_file_prefix,
     ] + _make_outs(file_prefix, suffixes)
     if token_vocab:
         imports.append(token_vocab)

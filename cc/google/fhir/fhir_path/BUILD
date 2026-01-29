@@ -1,18 +1,12 @@
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
-load("//bazel:antlr4_cc.bzl", "antlr4_cc_lexer", "antlr4_cc_parser")
+load("//bazel:antlr4_cc.bzl", "antlr4_cc_parser")
 
 licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
 
 exports_files(["FhirPath.g4"])
-
-antlr4_cc_lexer(
-    name = "fhir_path_lexer",
-    src = "FhirPath.g4",
-    namespaces = ["antlr_parser"],
-)
 
 antlr4_cc_parser(
     name = "fhir_path_grammar",
@@ -43,7 +37,6 @@ cc_library(
     strip_include_prefix = "//cc/",
     deps = [
         ":fhir_path_grammar",
-        ":fhir_path_lexer",
         ":fhir_path_types",
         ":utils",
         "//cc/google/fhir:annotations",
